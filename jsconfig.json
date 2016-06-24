@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "ES6"
+    },
+     "files": [
+        "ToggleGrid.js"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
