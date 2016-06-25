@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch ToggleGrid.html with sourcemaps",
+            "name": "Launch index.html with sourcemaps",
             "type": "chrome",
             "request": "launch",
-            "file": "${workspaceRoot}/ToggleGrid.html",
+            "file": "${workspaceRoot}/index.html",
             "sourceMaps": true,
             "webRoot": "${workspaceRoot}"
         },
