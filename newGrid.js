@@ -197,8 +197,9 @@ function  csolve(offsetX, offsetY, size, defectX, defectY) {
                     if( k+offsetX != defectX || l+offsetY != defectY){
                         if(box2.getAttribute("filled") == "true" )
                             console.log("There was a problem");
+                        totalFilled++
                         box2.setAttribute("filled", true);
-                        box2.setAttribute("fill", allCol[curColor]);
+                        box2.setAttribute("fill", rgbToHex(totalFilled/3*colorIncrement, 120 + totalFilled/3*colorIncrement/2, 255))
                     }
 
                 }
@@ -283,6 +284,8 @@ resButton.addEventListener('click', function(evt) {
 
 var otherButton = document.getElementById('solveCButton');
 otherButton.addEventListener('click', function(evt) {
+    totalFilled = 0;
+    colorIncrement = 255 / ((numberPerSide*numberPerSide - 1) / 3);
     findDefectForCSolve(numberPerSide);
     // var box = boxArray[0][1];
     // box.setAttribute("fill", allCol[curColor]);
