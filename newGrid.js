@@ -131,28 +131,28 @@ var lsolve = function(x, y, size) {
             return true;
         } else if(lsolve(x, y, size/2) == true)
         {
-            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x + (size/4), y + (size/4), size/2);
             lsolve(x, y+size/2, size/2);
             lsolve(x+size/2, y+size/2, size/2);
             lsolve(x+size/2, y, size/2);
             return true;
         } else if(lsolve(x, y+size/2, size/2) == true)
         {
-            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x + (size/4), y + (size/4), size/2);
             lsolve(x, y, size/2);
             lsolve(x+size/2, y+size/2, size/2);
             lsolve(x+size/2, y, size/2);
             return true;
         } else if(lsolve(x+size/2, y+size/2, size/2) == true)
         {
-            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x + (size/4), y + (size/4), size/2);
             lsolve(x, y, size/2);
             lsolve(x, y+size/2, size/2);
             lsolve(x+size/2, y, size/2);
             return true;
-        } else if(lsolve(x+size/2, y, size/2 == true))
+        } else if(lsolve(x+size/2, y, size/2 )== true)
         {
-            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x + (size/4), y + (size/4), size/2);
             lsolve(x, y, size/2);
             lsolve(x, y+size/2, size/2);
             lsolve(x+size/2, y+size/2, size/2);
