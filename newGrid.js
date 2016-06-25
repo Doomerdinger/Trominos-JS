@@ -3,7 +3,7 @@ document.createSvg = function(tagName) {
     return this.createElementNS(svgNS, tagName);
 };
 
-var numberPerSide = 2;
+var numberPerSide = 4;
 var size = 10;
 var pixelsPerSide = 400;
 
@@ -44,15 +44,16 @@ var grid = function(numberPerSide, size, pixelsPerSide, fillColor) {
     svg.addEventListener(
         "click",
         function(e){
+            var box2 = e.target;
             var curCol = e.target.getAttribute("fill");
             var toBeCol = e.button == 1 ? "#808080" : allCol[curColor];
             if(curCol == toBeCol)
             {
                 e.target.setAttribute("fill", "#FFFFFF");
-                box.setAttribute("filled", false);
+                box2.setAttribute("filled", false);
             } else {
                 e.target.setAttribute("fill", toBeCol);
-                box.setAttribute("filled", true);
+                box2.setAttribute("filled", true);
             }
         },
         false);
@@ -104,12 +105,49 @@ var lsolve = function(x, y, size) {
                 }
             }
         }
+    } else {
+        if(lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2) == true)
+        {
+            lsolve(x, y, size/2);
+            lsolve(x, y+size/2, size/2);
+            lsolve(x+size/2, y+size/2, size/2);
+            lsolve(x+size/2, y, size/2);
+            return true;
+        } else if(lsolve(x, y, size/2) == true)
+        {
+            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x, y+size/2, size/2);
+            lsolve(x+size/2, y+size/2, size/2);
+            lsolve(x+size/2, y, size/2);
+            return true;
+        } else if(lsolve(x, y+size/2, size/2) == true)
+        {
+            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x, y, size/2);
+            lsolve(x+size/2, y+size/2, size/2);
+            lsolve(x+size/2, y, size/2);
+            return true;
+        } else if(lsolve(x+size/2, y+size/2, size/2) == true)
+        {
+            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x, y, size/2);
+            lsolve(x, y+size/2, size/2);
+            lsolve(x+size/2, y, size/2);
+            return true;
+        } else if(lsolve(x+size/2, y, size/2 == true))
+        {
+            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x, y, size/2);
+            lsolve(x, y+size/2, size/2);
+            lsolve(x+size/2, y+size/2, size/2);
+            return true;
+        } else { return false }
     }
 }
 
 var resButton = document.getElementById('solveLButton');
 resButton.addEventListener('click', function(evt) {
-    lsolve(0,0,2);
+    lsolve(0,0,4);
     // var box = boxArray[0][1];
     // box.setAttribute("fill", allCol[curColor]);
 }, false);
