@@ -1,7 +1,13 @@
 var gridSize = 9;
 var colors = ["#DC143C", "#00008B", "#8B008B", "#008000"]
 var cssStyle = document.styleSheets[0];
-// alert(backgroundColor);
+
+function gridTile(xcoord, ycoord, filled) {
+	this.x = xcoord;
+	this.y = ycoord;
+	this.isFilled = filled;
+}
+
 function getSquare(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
 	var boxXSize = Math.floor((canvas.width - 1) / gridSize);

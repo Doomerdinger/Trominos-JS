@@ -1,0 +1,13 @@
+body{
+    background-color: #222;
+    padding:30px;
+    cursor:pointer !important;
+    color:white;
+    font-family:verdana;
+    font-size:10px;
+    }
+.fill {background-color:white;}
+#designer {width: 500px;height:100px;margin-bottom:10px}
+#board {width:100px;margin-top:20px;}
+.square {height: 6px; width:6px;float:left;border:1px solid white;margin:1px;;cursor:pointer;}
+.pixel {float:left;width:2px;height:2px;}
