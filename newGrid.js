@@ -3,14 +3,13 @@ document.createSvg = function(tagName) {
     return this.createElementNS(svgNS, tagName);
 };
 
-var numberPerSide = 32;
+
+var numberPerSide = 8;
 var size = 10;
 var pixelsPerSide = 400;
 
 var allCol = ["#DC143C", "#00008B", "#8B008B", "#008000"];
 var curColor = 0;
-
-var totalFilled = 0;
 
 var boxArray = [];
 
@@ -80,9 +79,23 @@ resButton.addEventListener('click', function(evt) {
     }
 }, false);
 
+function rgbToHex(r, g, b) {
+	if (r > 255 || g > 255 || b > 255)
+		throw "Invalid color component";
+    var str = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+	return str.toUpperCase();
+	// return "#" + ((r << 16) | (g << 8) | b).toString(16).slice(1);
+}
+
+var totalVisited = 0;
+var totalFilled = 0;
+var colorIncrement = 0;
+var calls = 0;
 var lsolve = function(x, y, size) {
+    calls++;
     if(size == 2)
     {
+        totalVisited = totalVisited + 4;
         for(var i = 0; i < size; i++) {
             for(var j = 0; j < size; j++) {
                 var box = boxArray[i+x][j+y];
@@ -95,8 +108,10 @@ var lsolve = function(x, y, size) {
                             var box2 = boxArray[k+x][l+y];
                             if(box2.getAttribute("filled") == "false")
                             {
+                                totalFilled++
                                 box2.setAttribute("filled", true);
-                                box2.setAttribute("fill", allCol[curColor]);
+                                box2.setAttribute("fill", rgbToHex(totalFilled/3*colorIncrement, 120 + totalFilled/3*colorIncrement/2, 255))
+                                // box2.setAttribute("fill", allCol[curColor]);
                             }
                         }
                     }
@@ -105,8 +120,10 @@ var lsolve = function(x, y, size) {
                 }
             }
         }
+        return false;
     } else {
-        if(lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2) == true)
+        var result = lsolve(x + (size/4), y + (size/4), size/2);
+        if(result == true)
         {
             lsolve(x, y, size/2);
             lsolve(x, y+size/2, size/2);
@@ -115,28 +132,28 @@ var lsolve = function(x, y, size) {
             return true;
         } else if(lsolve(x, y, size/2) == true)
         {
-            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x + (size/4), y + (size/4), size/2);
             lsolve(x, y+size/2, size/2);
             lsolve(x+size/2, y+size/2, size/2);
             lsolve(x+size/2, y, size/2);
             return true;
         } else if(lsolve(x, y+size/2, size/2) == true)
         {
-            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x + (size/4), y + (size/4), size/2);
             lsolve(x, y, size/2);
             lsolve(x+size/2, y+size/2, size/2);
             lsolve(x+size/2, y, size/2);
             return true;
         } else if(lsolve(x+size/2, y+size/2, size/2) == true)
         {
-            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x + (size/4), y + (size/4), size/2);
             lsolve(x, y, size/2);
             lsolve(x, y+size/2, size/2);
             lsolve(x+size/2, y, size/2);
             return true;
-        } else if(lsolve(x+size/2, y, size/2 == true))
+        } else if(lsolve(x+size/2, y, size/2 )== true)
         {
-            lsolve(x + (size/2 - 1), y + (size/2 - 1), size/2);
+            lsolve(x + (size/4), y + (size/4), size/2);
             lsolve(x, y, size/2);
             lsolve(x, y+size/2, size/2);
             lsolve(x+size/2, y+size/2, size/2);
@@ -256,9 +273,12 @@ function  csolve(offsetX, offsetY, size, defectX, defectY) {
 
 var resButton = document.getElementById('solveLButton');
 resButton.addEventListener('click', function(evt) {
-    lsolve(0,0,4);
-    // var box = boxArray[0][1];
-    // box.setAttribute("fill", allCol[curColor]);
+    calls = 0;
+    totalFilled = 0;
+    totalVisited = 0;
+    colorIncrement = 255 / ((numberPerSide*numberPerSide - 1) / 3);
+    lsolve(0,0,numberPerSide);
+    var p = 0;
 }, false);
 
 var otherButton = document.getElementById('solveCButton');
@@ -266,4 +286,4 @@ otherButton.addEventListener('click', function(evt) {
     findDefectForCSolve(numberPerSide);
     // var box = boxArray[0][1];
     // box.setAttribute("fill", allCol[curColor]);
-}, false);
+    }, false);
