@@ -87,15 +87,11 @@ function rgbToHex(r, g, b) {
 	// return "#" + ((r << 16) | (g << 8) | b).toString(16).slice(1);
 }
 
-var totalVisited = 0;
 var totalFilled = 0;
 var colorIncrement = 0;
-var calls = 0;
 var lsolve = function(x, y, size) {
-    calls++;
     if(size == 2)
     {
-        totalVisited = totalVisited + 4;
         for(var i = 0; i < size; i++) {
             for(var j = 0; j < size; j++) {
                 var box = boxArray[i+x][j+y];
@@ -274,9 +270,7 @@ function  csolve(offsetX, offsetY, size, defectX, defectY) {
 
 var resButton = document.getElementById('solveLButton');
 resButton.addEventListener('click', function(evt) {
-    calls = 0;
     totalFilled = 0;
-    totalVisited = 0;
     colorIncrement = 255 / ((numberPerSide*numberPerSide - 1) / 3);
     lsolve(0,0,numberPerSide);
     var p = 0;
