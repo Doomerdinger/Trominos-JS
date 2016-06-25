@@ -1,3 +1,8 @@
+/** Main Trominos solution file by Alec Tiefenthal and Peter Larson
+ * 
+*/
+
+
 document.createSvg = function(tagName) {
     var svgNS = "http://www.w3.org/2000/svg";
     return this.createElementNS(svgNS, tagName);
@@ -158,10 +163,16 @@ var lsolve = function(x, y, size) {
     }
 }
 
-var findDefectForCSolve = function(size) {
-    curColor = (curColor + 1) % allCol.length;
+/** This function is called to begin solving using the method proposed in the reading. 
+ * This function also sets up for recursion. 
+ * 
+*/
+var beginCSolve = function(size) {
+
+    //This section will find the location of a defect in the grid. 
     defectX=-1;
     defectY=-1;
+    numberFound = 0;
     for(var si = 0; si<size; si++){
         for(var sy = 0; sy<size; sy++){
             var box = boxArray[si][sy];
@@ -169,21 +180,27 @@ var findDefectForCSolve = function(size) {
             {
                 defectX = si;
                 defectY = sy;
+                numberFound++;
             }
         }
     }
-    if(defectX == -1 || defectY == -1)
+    //If there are too many or two few defects, the code will not run. 
+    if(numberFound != 1)
         return false;
+    
     csolve(0,0,size,defectX,defectY);
 
 }
 
+/**
+ * This is the recursive function used for this solution. 
+ */
 function  csolve(offsetX, offsetY, size, defectX, defectY) {
-    
+    //If the size is two, then we have the base case code. We will place a single trominoe on the three empty spaces. 
     if(size == 2)
     {
         //TODO: Check logic
-        if(defectX - offsetX <= size && defectY - offsetY <= size){
+        //if(defectX - offsetX <= size && defectY - offsetY <= size){
 
             for(var k = 0; k < size; k++)
             {
@@ -200,10 +217,11 @@ function  csolve(offsetX, offsetY, size, defectX, defectY) {
 
                 }
             }
-            curColor = (curColor + 1) % allCol.length;
-            return true;
-        }
-
+        //}
+    //If the size is larger than 2, then we will call the algorithm recursivly. 
+    //We will make different calls depending on the quadrant that the piece is in, but the general form is the same for all. 
+    //First we place the center piece, 
+    //Then we call this algorithm on the four quadrants recursively. 
     } else {
         if(defectX-offsetX >= size/2){
             if( defectY-offsetY >= size/2){
@@ -267,7 +285,7 @@ function  csolve(offsetX, offsetY, size, defectX, defectY) {
 }
 
 
-
+//This code adds an event listener to the button to solve by l mettod. 
 var resButton = document.getElementById('solveLButton');
 resButton.addEventListener('click', function(evt) {
     totalFilled = 0;
@@ -276,11 +294,12 @@ resButton.addEventListener('click', function(evt) {
     var p = 0;
 }, false);
 
+//This code adds an event listener to the button to solve by the center placement mettod. 
 var otherButton = document.getElementById('solveCButton');
 otherButton.addEventListener('click', function(evt) {
     totalFilled = 0;
     colorIncrement = 255 / ((numberPerSide*numberPerSide - 1) / 3);
-    findDefectForCSolve(numberPerSide);
+    beginCSolve(numberPerSide);
     // var box = boxArray[0][1];
     // box.setAttribute("fill", allCol[curColor]);
     }, false);
