@@ -3,7 +3,7 @@ document.createSvg = function(tagName) {
     return this.createElementNS(svgNS, tagName);
 };
 
-var numberPerSide = 4;
+var numberPerSide = 32;
 var size = 10;
 var pixelsPerSide = 400;
 
@@ -145,9 +145,125 @@ var lsolve = function(x, y, size) {
     }
 }
 
+var findDefectForCSolve = function(size) {
+    curColor = (curColor + 1) % allCol.length;
+    defectX=-1;
+    defectY=-1;
+    for(var si = 0; si<size; si++){
+        for(var sy = 0; sy<size; sy++){
+            var box = boxArray[si][sy];
+            if(box.getAttribute("filled")== "true")
+            {
+                defectX = si;
+                defectY = sy;
+            }
+        }
+    }
+    if(defectX == -1 || defectY == -1)
+        return false;
+    csolve(0,0,size,defectX,defectY);
+
+}
+
+function  csolve(offsetX, offsetY, size, defectX, defectY) {
+    
+    if(size == 2)
+    {
+        //TODO: Check logic
+        if(defectX - offsetX <= size && defectY - offsetY <= size){
+
+            for(var k = 0; k < size; k++)
+            {
+                for(var l = 0; l < size; l++)
+                {
+                    var box2 = boxArray[k+offsetX][l+offsetY];
+                    if( k+offsetX != defectX || l+offsetY != defectY){
+                        if(box2.getAttribute("filled") == "true" )
+                            console.log("There was a problem");
+                        box2.setAttribute("filled", true);
+                        box2.setAttribute("fill", allCol[curColor]);
+                    }
+
+                }
+            }
+            curColor = (curColor + 1) % allCol.length;
+            return true;
+        }
+
+    } else {
+        if(defectX-offsetX >= size/2){
+            if( defectY-offsetY >= size/2){
+                //Is in bottom right corner. 
+                csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2,offsetY+size/2)
+                
+                //recursion for bottom left. 
+                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2)
+                //recursion for top left. 
+                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1) 
+                //recusions for bottom right. 
+                csolve(offsetX+size/2,offsetY+size/2,size/2,defectX,defectY) 
+                //recursion for top right
+                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1) 
+
+          
+            } else {
+                //Is in top right corner
+                 //Place center piece. 
+                csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2,offsetY+size/2-1)
+
+                //recursion for bottom left. 
+                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2)
+                //recursion for top left. 
+                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1) 
+                //recusions for bottom right. 
+                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2) 
+                //recursion for top right
+                csolve(offsetX+size/2,offsetY,size/2,defectX,defectY)   
+            }
+        } else {
+            if( defectY-offsetY >= size/2){
+                //Is in bottom left corner. 
+                csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2-1,offsetY+size/2)
+                
+                //recursion for bottom left. 
+                csolve(offsetX,offsetY+size/2,size/2,defectX,defectY)
+                //recursion for top left. 
+                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1) 
+                //recusions for bottom right. 
+                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2) 
+                //recursion for top right
+                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1)  
+
+            } else {
+                //Is in top left corner
+
+                csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2-1,offsetY+size/2-1)
+                //recursion for bottom left. 
+                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2)
+                //recursion for top left. 
+                csolve(offsetX,offsetY,size/2,defectX,defectY) 
+                //recusions for bottom right. 
+                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2) 
+                //recursion for top right
+                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1)   
+            }
+        }
+
+    }
+}
+
+
+
 var resButton = document.getElementById('solveLButton');
 resButton.addEventListener('click', function(evt) {
     lsolve(0,0,4);
+    // var box = boxArray[0][1];
+    // box.setAttribute("fill", allCol[curColor]);
+}, false);
+
+var otherButton = document.getElementById('solveCButton');
+otherButton.addEventListener('click', function(evt) {
+    findDefectForCSolve(numberPerSide);
     // var box = boxArray[0][1];
     // box.setAttribute("fill", allCol[curColor]);
 }, false);
