@@ -14,7 +14,15 @@ var size = 10;
 var pixelsPerSide = 400;
 
 var allCol = ["#DC143C", "#00008B", "#8B008B", "#008000", "#FF8000", "#4B8A08"];
+
+var redCodes = ["#ffb3b3","#ff4d4d","#ff0000","#990000"]
+var oraCodes = ["#ffe0b3","#ffb84d","#ff9900","#995c00"]
+var greCodes = ["#99ff33","#85e085","#33cc33","#33ffad"]
+var bluCodes = ["#99d6ff","#0099ff","#0000ff","#004d80"]
+var vioCodes = ["#e580ff","#d11aff","#8c1aff","#5900b3","#330066"]
+var roygbivCodes = [redCodes,oraCodes,greCodes,bluCodes,vioCodes];
 var curColor = 0;
+var roygbivColor = 0;
 
 var boxArray = [];
 
@@ -187,7 +195,6 @@ var beginCSolve = function(size) {
     //If there are too many or two few defects, the code will not run. 
     if(numberFound != 1)
         return false;
-    
     csolve(0,0,size,defectX,defectY, 0);
 
 }
@@ -197,6 +204,7 @@ var beginCSolve = function(size) {
  */
 function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
     //If the size is two, then we have the base case code. We will place a single trominoe on the three empty spaces. 
+    //depth = (depth + 1) % roygbivCodes.length;
     if(size == 2)
     {
         //TODO: Check logic
@@ -211,12 +219,13 @@ function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
                         if(box2.getAttribute("filled") == "true" )
                             console.log("There was a problem");
                         box2.setAttribute("filled", true);
-                        box2.setAttribute("fill", rgbToHex(totalFilled*colorIncrement, 120 + totalFilled*colorIncrement/2, 255));
+                        box2.setAttribute("fill", roygbivCodes[depth % roygbivCodes.length][totalFilled % roygbivCodes[roygbivColor % roygbivCodes.length].length]); //rgbToHex(totalFilled*colorIncrement, totalFilled*colorIncrement, totalFilled*colorIncrement));
                     }
 
                 }
             }
-            totalFilled++
+            totalFilled++;
+            roygbivColor++;
         //}
     //If the size is larger than 2, then we will call the algorithm recursivly. 
     //We will make different calls depending on the quadrant that the piece is in, but the general form is the same for all. 
@@ -224,19 +233,21 @@ function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
     //Then we call this algorithm on the four quadrants recursively. 
     } else {
         depth++;
+        roygbivColor = 0;
         if(defectX-offsetX >= size/2){
             if( defectY-offsetY >= size/2){
                 //Is in bottom right corner. 
+
                 csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2,offsetY+size/2, depth)
-                
+
                 //recursion for bottom left. 
-                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth)
+                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth+1)
                 //recursion for top left. 
-                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1, depth) 
+                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1, depth+1) 
                 //recusions for bottom right. 
-                csolve(offsetX+size/2,offsetY+size/2,size/2,defectX,defectY, depth) 
+                csolve(offsetX+size/2,offsetY+size/2,size/2,defectX,defectY, depth+1) 
                 //recursion for top right
-                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1, depth) 
+                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1, depth+1) 
 
           
             } else {
@@ -245,40 +256,39 @@ function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
                 csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2,offsetY+size/2-1, depth)
 
                 //recursion for bottom left. 
-                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth)
+                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth+1)
                 //recursion for top left. 
-                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1, depth) 
+                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1, depth+1) 
                 //recusions for bottom right. 
-                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2, depth) 
+                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2, depth+1) 
                 //recursion for top right
-                csolve(offsetX+size/2,offsetY,size/2,defectX,defectY, depth)   
+                csolve(offsetX+size/2,offsetY,size/2,defectX,defectY, depth+1)   
             }
         } else {
             if( defectY-offsetY >= size/2){
                 //Is in bottom left corner. 
                 csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2-1,offsetY+size/2, depth)
-                
                 //recursion for bottom left. 
-                csolve(offsetX,offsetY+size/2,size/2,defectX,defectY, depth)
+                csolve(offsetX,offsetY+size/2,size/2,defectX,defectY, depth+1)
                 //recursion for top left. 
-                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1, depth) 
+                csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1, depth+1) 
                 //recusions for bottom right. 
-                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2, depth) 
+                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2, depth+1) 
                 //recursion for top right
-                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1, depth)  
+                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1, depth+1)  
 
             } else {
                 //Is in top left corner
 
                 csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2-1,offsetY+size/2-1, depth)
                 //recursion for bottom left. 
-                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth)
+                csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth+1)
                 //recursion for top left. 
-                csolve(offsetX,offsetY,size/2,defectX,defectY, depth) 
+                csolve(offsetX,offsetY,size/2,defectX,defectY, depth+1) 
                 //recusions for bottom right. 
-                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2, depth) 
+                csolve(offsetX+size/2,offsetY+size/2,size/2,offsetX+size/2,offsetY+size/2, depth+1) 
                 //recursion for top right
-                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1, depth)   
+                csolve(offsetX+size/2,offsetY,size/2,offsetX+size/2,offsetY+size/2-1, depth+1)   
             }
         }
 
