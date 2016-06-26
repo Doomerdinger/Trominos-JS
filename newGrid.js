@@ -102,7 +102,7 @@ function rgbToHex(r, g, b) {
 
 var totalFilled = 0;
 var colorIncrement = 0;
-var lsolve = function(x, y, size) {
+var lsolve = function(x, y, size, depth) {
     if(size == 2)
     {
         for(var i = 0; i < size; i++) {
@@ -119,9 +119,11 @@ var lsolve = function(x, y, size) {
                             {
                                 totalFilled++
                                 box2.setAttribute("filled", true);
-                                box2.setAttribute("fill", rgbToHex(totalFilled/3*colorIncrement, 120 + totalFilled/3*colorIncrement/2, 255))
+                                //box2.setAttribute("fill", rgbToHex(totalFilled/3*colorIncrement, 120 + totalFilled/3*colorIncrement/2, 255))
                                 // box2.setAttribute("fill", allCol[curColor]);
-                            }
+                                
+                                //New Depth-coloring
+                                box2.setAttribute("fill", roygbivCodes[depth % roygbivCodes.length][roygbivColor % roygbivCodes[depth % roygbivCodes.length].length]);                            }
                         }
                     }
                     curColor = (curColor + 1) % allCol.length;
@@ -131,41 +133,46 @@ var lsolve = function(x, y, size) {
         }
         return false;
     } else {
-        var result = lsolve(x + (size/4), y + (size/4), size/2);
+        var result = lsolve(x + (size/4), y + (size/4), size/2, depth + 1);
         if(result == true)
         {
-            lsolve(x, y, size/2);
-            lsolve(x, y+size/2, size/2);
-            lsolve(x+size/2, y+size/2, size/2);
-            lsolve(x+size/2, y, size/2);
+            roygbivColor++;
+            lsolve(x, y, size/2, depth + 2);
+            lsolve(x, y+size/2, size/2, depth + 2);
+            lsolve(x+size/2, y+size/2, size/2, depth + 2);
+            lsolve(x+size/2, y, size/2, depth + 2);
             return true;
-        } else if(lsolve(x, y, size/2) == true)
+        } else if(lsolve(x, y, size/2, depth + 1) == true)
         {
-            lsolve(x + (size/4), y + (size/4), size/2);
-            lsolve(x, y+size/2, size/2);
-            lsolve(x+size/2, y+size/2, size/2);
-            lsolve(x+size/2, y, size/2);
+            roygbivColor++;
+            lsolve(x + (size/4), y + (size/4), size/2, depth + 2);
+            lsolve(x, y+size/2, size/2, depth + 2);
+            lsolve(x+size/2, y+size/2, size/2, depth + 2);
+            lsolve(x+size/2, y, size/2, depth + 2);
             return true;
-        } else if(lsolve(x, y+size/2, size/2) == true)
+        } else if(lsolve(x, y+size/2, size/2, depth + 1) == true)
         {
-            lsolve(x + (size/4), y + (size/4), size/2);
-            lsolve(x, y, size/2);
-            lsolve(x+size/2, y+size/2, size/2);
-            lsolve(x+size/2, y, size/2);
+            roygbivColor++;
+            lsolve(x + (size/4), y + (size/4), size/2, depth + 2);
+            lsolve(x, y, size/2, depth + 2);
+            lsolve(x+size/2, y+size/2, size/2, depth + 2);
+            lsolve(x+size/2, y, size/2, depth + 2);
             return true;
-        } else if(lsolve(x+size/2, y+size/2, size/2) == true)
+        } else if(lsolve(x+size/2, y+size/2, size/2, depth + 1) == true)
         {
-            lsolve(x + (size/4), y + (size/4), size/2);
-            lsolve(x, y, size/2);
-            lsolve(x, y+size/2, size/2);
-            lsolve(x+size/2, y, size/2);
+            roygbivColor++;
+            lsolve(x + (size/4), y + (size/4), size/2, depth + 2);
+            lsolve(x, y, size/2, depth + 2);
+            lsolve(x, y+size/2, size/2, depth + 2);
+            lsolve(x+size/2, y, size/2, depth + 2);
             return true;
-        } else if(lsolve(x+size/2, y, size/2 )== true)
+        } else if(lsolve(x+size/2, y, size/2, depth + 1)== true)
         {
-            lsolve(x + (size/4), y + (size/4), size/2);
-            lsolve(x, y, size/2);
-            lsolve(x, y+size/2, size/2);
-            lsolve(x+size/2, y+size/2, size/2);
+            roygbivColor++;
+            lsolve(x + (size/4), y + (size/4), size/2, depth + 2);
+            lsolve(x, y, size/2, depth + 2);
+            lsolve(x, y+size/2, size/2, depth + 2);
+            lsolve(x+size/2, y+size/2, size/2, depth + 2);
             return true;
         } else { return false }
     }
@@ -201,6 +208,10 @@ var beginCSolve = function(size) {
 
 /**
  * This is the recursive function used for this solution. 
+ * The idea of this algorithm is that it determines which quadrant of the algorithm has the defect in it. 
+ * It then places a tile in the center, so that one square is filled in each of the quadrants with no defect. 
+ * Finally, it calls itself recursivly on the now defective four quadrants. 
+ * 
  */
 function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
     //If the size is two, then we have the base case code. We will place a single trominoe on the three empty spaces. 
@@ -219,7 +230,7 @@ function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
                         if(box2.getAttribute("filled") == "true" )
                             console.log("There was a problem");
                         box2.setAttribute("filled", true);
-                        box2.setAttribute("fill", roygbivCodes[depth % roygbivCodes.length][totalFilled % roygbivCodes[roygbivColor % roygbivCodes.length].length]); //rgbToHex(totalFilled*colorIncrement, totalFilled*colorIncrement, totalFilled*colorIncrement));
+                        box2.setAttribute("fill", roygbivCodes[depth % roygbivCodes.length][roygbivColor % roygbivCodes[depth % roygbivCodes.length].length]); //rgbToHex(totalFilled*colorIncrement, totalFilled*colorIncrement, totalFilled*colorIncrement));
                     }
 
                 }
@@ -302,7 +313,7 @@ var resButton = document.getElementById('solveLButton');
 resButton.addEventListener('click', function(evt) {
     totalFilled = 0;
     colorIncrement = 255 / ((numberPerSide*numberPerSide - 1) / 3);
-    lsolve(0,0,numberPerSide);
+    lsolve(0,0,numberPerSide,0);
     var p = 0;
 }, false);
 
@@ -316,11 +327,12 @@ otherButton.addEventListener('click', function(evt) {
     // box.setAttribute("fill", allCol[curColor]);
     }, false);
 
-    
+    //Button to change the size of the grid. Repeatedly doing this will 
 var kButton = document.getElementById('kButton');
 kButton.addEventListener('click', function(evt) {
     var input = document.getElementById('kInput');
     numberPerSide = Math.pow(2,parseInt(input.value));
+    container.innerHTML = '';
     container.appendChild(grid(numberPerSide, size, pixelsPerSide, "#FFFFFF"));
 
 
