@@ -19,7 +19,7 @@ var redCodes = ["#ffb3b3","#ff4d4d","#ff0000","#990000"]
 var oraCodes = ["#ffe0b3","#ffb84d","#ff9900","#995c00"]
 var greCodes = ["#99ff33","#85e085","#33cc33","#33ffad"]
 var bluCodes = ["#99d6ff","#0099ff","#0000ff","#004d80"]
-var vioCodes = ["#e580ff","#d11aff","#8c1aff","#5900b3","#330066"]
+var vioCodes = ["#e580ff","#d11aff","#8c1aff","#5900b3"]
 var roygbivCodes = [redCodes,oraCodes,greCodes,bluCodes,vioCodes];
 var curColor = 0;
 var roygbivColor = 0;
@@ -79,7 +79,7 @@ container.addEventListener('wheel', function(evt) {
         curColor = (curColor + 1) % allCol.length;
     } else if(evt.deltaY < 0) {curColor = (curColor + allCol.length - 1) % allCol.length;}
 }, false);
-container.appendChild(grid(numberPerSide, size, pixelsPerSide, "#FFFFFF"));
+
 
 var resButton = document.getElementById('resetButton');
 resButton.addEventListener('click', function(evt) {
@@ -233,13 +233,12 @@ function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
     //Then we call this algorithm on the four quadrants recursively. 
     } else {
         depth++;
-        roygbivColor = 0;
         if(defectX-offsetX >= size/2){
             if( defectY-offsetY >= size/2){
                 //Is in bottom right corner. 
 
                 csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2,offsetY+size/2, depth)
-
+                roygbivColor = 0;
                 //recursion for bottom left. 
                 csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth+1)
                 //recursion for top left. 
@@ -254,7 +253,7 @@ function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
                 //Is in top right corner
                  //Place center piece. 
                 csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2,offsetY+size/2-1, depth)
-
+                roygbivColor = 0;
                 //recursion for bottom left. 
                 csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth+1)
                 //recursion for top left. 
@@ -269,6 +268,7 @@ function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
                 //Is in bottom left corner. 
                 csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2-1,offsetY+size/2, depth)
                 //recursion for bottom left. 
+                roygbivColor = 0;
                 csolve(offsetX,offsetY+size/2,size/2,defectX,defectY, depth+1)
                 //recursion for top left. 
                 csolve(offsetX,offsetY,size/2,offsetX+size/2-1,offsetY+size/2-1, depth+1) 
@@ -282,6 +282,7 @@ function  csolve(offsetX, offsetY, size, defectX, defectY, depth) {
 
                 csolve(offsetX+size/2-1, offsetY+size/2-1, 2, offsetX+size/2-1,offsetY+size/2-1, depth)
                 //recursion for bottom left. 
+                roygbivColor = 0;
                 csolve(offsetX,offsetY+size/2,size/2,offsetX+size/2-1,offsetY+size/2, depth+1)
                 //recursion for top left. 
                 csolve(offsetX,offsetY,size/2,defectX,defectY, depth+1) 
@@ -313,4 +314,14 @@ otherButton.addEventListener('click', function(evt) {
     beginCSolve(numberPerSide);
     // var box = boxArray[0][1];
     // box.setAttribute("fill", allCol[curColor]);
+    }, false);
+
+    
+var kButton = document.getElementById('kButton');
+kButton.addEventListener('click', function(evt) {
+    var input = document.getElementById('kInput');
+    numberPerSide = Math.pow(2,parseInt(input.value));
+    container.appendChild(grid(numberPerSide, size, pixelsPerSide, "#FFFFFF"));
+
+
     }, false);
